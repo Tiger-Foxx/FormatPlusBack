@@ -11,3 +11,4 @@ django-cors-headers==4.3.1  # Gestion des CORS pour l’API
 django-filter==23.2  # Filtres pour les vues Django et DRF
 requests==2.31.0  # Pour les appels API externes
 validators
+whitenoise
