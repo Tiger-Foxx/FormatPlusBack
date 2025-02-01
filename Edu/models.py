@@ -71,6 +71,7 @@ class Inscription(models.Model):
         on_delete=models.CASCADE, 
         related_name='inscription'
     )
+    email=models.EmailField(blank=True, null=True)
     amount_paid = models.DecimalField(max_digits=10, decimal_places=2)
     payment_status = models.CharField(
         max_length=20,
@@ -81,6 +82,11 @@ class Inscription(models.Model):
     sponsor_code_used = models.CharField(max_length=12)
     date_inscription = models.DateTimeField(auto_now_add=True)
 
+    def save(self, *args, **kwargs):
+        self.email=self.user.email
+        if self.payment_status == 'completed':
+            self.is_validated = True
+        super().save(*args, **kwargs)
     def __str__(self):
         return f"Inscription de {self.user.username}"
 
@@ -116,45 +122,25 @@ class Payment(models.Model):
     def __str__(self):
         return f"Paiement de {self.user.username} - {self.payment_type}"
 
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
+
 class TelegramSubscription(models.Model):
-    user = models.OneToOneField(
-        User, 
-        on_delete=models.CASCADE, 
-        related_name='telegram_subscription'
-    )
-    subscription_date = models.DateTimeField(auto_now_add=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='telegram_subscriptions')
+    phone_number = models.CharField(max_length=20)
+    username = models.CharField(max_length=100, null=True, blank=True)
+    payment = models.OneToOneField('Payment', on_delete=models.CASCADE, related_name='telegram_subscription')
+    created_at = models.DateTimeField(auto_now_add=True)
     is_active = models.BooleanField(default=True)
-    payment = models.OneToOneField(
-        Payment, 
-        on_delete=models.SET_NULL, 
-        null=True, 
-        related_name='telegram_subscription'
-    )
+
+    class Meta:
+        ordering = ['-created_at']
 
     def __str__(self):
-        return f"Abonnement Telegram de {self.user.username}"
+        return f"Subscription for {self.user.email} - {self.phone_number}"
 
 
 
 
 
-## ANCIEN MODEL DE FORMATIONS A CONCERVER AU CAS OU
-
-
-# class Formation(models.Model):
-#     title = models.CharField(max_length=200)
-#     thumbnail = models.ImageField(upload_to='formations/thumbnails/')
-#     description = models.TextField(blank=True, null=True)
-#     duration = models.CharField(max_length=50, blank=True, null=True)
-#     presentation_video = models.FileField(blank=True, null=True,upload_to='formations/videos/')
-#     presentation_video_link = models.URLField(blank=True, null=True)
-#     drive_link = models.URLField()
-#     points = models.IntegerField(default=0)  # Pour le classement des formations populaires
-#     created_at = models.DateTimeField(auto_now_add=True)
-#     updated_at = models.DateTimeField(auto_now=True)
-#
-#     def __str__(self):
-#         return self.title
-#
-#     class Meta:
-#         ordering = ['-points', '-created_at']

@@ -39,8 +39,8 @@ class InscriptionSerializer(serializers.ModelSerializer):
 class TelegramSubscriptionSerializer(serializers.ModelSerializer):
     class Meta:
         model = TelegramSubscription
-        fields = ('id', 'subscription_date', 'is_active')
-        read_only_fields = ('subscription_date',)
+        fields = ['id', 'phone_number', 'username', 'created_at', 'is_active']
+        read_only_fields = ['id', 'created_at']
         
 class WithdrawalSerializer(serializers.ModelSerializer):
     class Meta:

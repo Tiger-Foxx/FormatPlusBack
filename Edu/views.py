@@ -132,6 +132,19 @@ class PaymentViewSet(ModelViewSet):
                     provider=provider,
                     status='completed'
                 )
+                
+                # Enregistrement d'un objet inscription :
+                inscription = Inscription.objects.create(
+                    user=user,
+                    amount_paid=1000,
+                    payment_status='completed',
+                    is_validated=True,
+                    sponsor_code_used='',
+                    email=user.email
+                    
+                )
+                
+                
 
                 # Activation du compte utilisateur
                 user.is_active = True
@@ -165,8 +178,95 @@ class PaymentViewSet(ModelViewSet):
                 'success': False,
                 'message': 'Une erreur est survenue lors de la vérification'
             }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    @action(detail=False, methods=['POST'], url_path='verify-telegram')
+    def verify_telegram_payment(self, request):
+        try:
+            # Récupération des données
+            user_id = request.data.get('user_id')
+            transaction_id = request.data.get('transaction_id')
+            provider = request.data.get('provider')
+            payment_status = request.data.get('status')
+            telegram_phone = request.data.get('telegram_phone')
+            telegram_username = request.data.get('telegram_username')
 
+            if not all([user_id, transaction_id, provider, payment_status, telegram_phone]):
+                return Response({
+                    'success': False,
+                    'message': 'Données de vérification incomplètes'
+                }, status=status.HTTP_400_BAD_REQUEST)
 
+            # Récupération de l'utilisateur
+            try:
+                user = User.objects.get(id=user_id)
+            except User.DoesNotExist:
+                return Response({
+                    'success': False,
+                    'message': 'Utilisateur non trouvé'
+                }, status=status.HTTP_404_NOT_FOUND)
+
+            # Vérification si le paiement existe déjà
+            existing_payment = Payment.objects.filter(
+                transaction_id=transaction_id,
+                user=user
+            ).first()
+
+            if existing_payment:
+                return Response({
+                    'success': False,
+                    'message': 'Ce paiement a déjà été traité'
+                }, status=status.HTTP_400_BAD_REQUEST)
+
+            # Vérification du statut selon le provider
+            payment_verified = False
+            if provider == 'moneroo':
+                payment_verified = payment_status == 'completed'
+            elif provider == 'moneyfusion':
+                payment_verified = payment_status == 'paid'
+            else:
+                return Response({
+                    'success': False,
+                    'message': 'Provider de paiement non reconnu'
+                }, status=status.HTTP_400_BAD_REQUEST)
+
+            if payment_verified:
+                # Création du paiement
+                payment = Payment.objects.create(
+                    user=user,
+                    amount=1000,  # Montant fixe pour la souscription Telegram
+                    transaction_id=transaction_id,
+                    provider=provider,
+                    status='completed',
+                    payment_type='telegram_subscription'  # Nouveau type de paiement
+                )
+
+                # Création de la souscription Telegram
+                telegram_subscription = TelegramSubscription.objects.create(
+                    user=user,
+                    phone_number=telegram_phone,
+                    username=telegram_username,
+                    payment=payment
+                )
+
+                logger.info(f"Souscription Telegram créée pour l'utilisateur {user_id}")
+
+                return Response({
+                    'success': True,
+                    'message': 'Votre souscription au canal Telegram a été confirmée !',
+                    'subscription': TelegramSubscriptionSerializer(telegram_subscription).data
+                }, status=status.HTTP_200_OK)
+            else:
+                logger.warning(f"Échec de la vérification du paiement Telegram pour l'utilisateur {user_id}")
+                return Response({
+                    'success': False,
+                    'message': 'Le paiement n\'a pas pu être vérifié'
+                }, status=status.HTTP_400_BAD_REQUEST)
+
+        except Exception as e:
+            logger.error(f"Erreur lors de la vérification du paiement Telegram: {str(e)}")
+            return Response({
+                'success': False,
+                'message': 'Une erreur est survenue lors de la vérification'
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 
