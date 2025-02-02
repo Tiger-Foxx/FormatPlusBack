@@ -114,7 +114,7 @@ class Payment(models.Model):
         choices=PAYMENT_STATUS_CHOICES,
         default='pending'
     )
-    transaction_id = models.CharField(max_length=100, unique=True)
+    transaction_id = models.CharField(max_length=100)
     payment_date = models.DateTimeField(auto_now_add=True)
     payment_method = models.CharField(max_length=50)
     payment_details = models.JSONField(default=dict, blank=True)

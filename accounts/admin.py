@@ -10,10 +10,10 @@ from datetime import timedelta
 from django.contrib import messages
 
 class CustomUserAdmin(UserAdmin):
-    list_display = ('username', 'email', 'sponsor_code', 'wallet_balance',
+    list_display = ('nom', 'email', 'sponsor_code', 'wallet_balance',
                     'is_paid', 'telegram_group_joined', 'date_joined', 'is_active')
-    list_filter = ('is_paid', 'telegram_group_joined', 'date_joined', 'is_active')
-    search_fields = ('username', 'email', 'sponsor_code', 'phone_number')
+    list_filter = ('nom','is_paid', 'telegram_group_joined', 'date_joined', 'is_active')
+    search_fields = ('nom', 'email', 'sponsor_code', 'phone_number')
     ordering = ('-date_joined',)
     
     # Ajouter is_paid et is_active aux champs modifiables directement dans la liste
@@ -23,7 +23,7 @@ class CustomUserAdmin(UserAdmin):
 
     fieldsets = (
         (None, {'fields': ('username', 'password')}),
-        ('Informations personnelles', {'fields': ('email', 'phone_number')}),
+        ('Informations personnelles', {'fields': ('email', 'phone_number','nom')}),
         ('Parrainage & Paiement', {
             'fields': ('sponsor_code', 'wallet_balance', 'is_paid', 'telegram_group_joined'),
         }),
