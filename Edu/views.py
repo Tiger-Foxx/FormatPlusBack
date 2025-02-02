@@ -219,7 +219,7 @@ class PaymentViewSet(ModelViewSet):
             # Vérification du statut selon le provider
             payment_verified = False
             if provider == 'moneroo':
-                payment_verified = payment_status == 'completed'
+                payment_verified = payment_status == 'success'
             elif provider == 'moneyfusion':
                 payment_verified = payment_status == 'paid'
             else:
