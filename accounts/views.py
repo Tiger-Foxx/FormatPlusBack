@@ -121,3 +121,13 @@ class LogoutView(APIView):
         except Exception:
             return Response({"error": "Token invalide"},
                             status=status.HTTP_400_BAD_REQUEST)
+            
+class WithdrawalViewSet(viewsets.ModelViewSet):
+    serializer_class = WithdrawalSerializer
+    permission_classes = [IsAuthenticated]
+    
+    def get_queryset(self):
+        return Withdrawal.objects.filter(user=self.request.user)
+    
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)

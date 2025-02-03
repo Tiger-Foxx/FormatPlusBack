@@ -3,7 +3,7 @@ from decimal import Decimal
 from rest_framework import serializers
 
 from EduDriveBack.settings import FRONT_END_LINK
-from .models import User, Sponsorship
+from .models import User, Sponsorship, Withdrawal
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -121,3 +121,10 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
 class LoginSerializer(serializers.Serializer):
     username = serializers.CharField()
     password = serializers.CharField(style={'input_type': 'password'})
+    
+
+class WithdrawalSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Withdrawal
+        fields = ['id', 'amount', 'beneficiary_name', 'beneficiary_number', 'status', 'created_at']
+        read_only_fields = ['status', 'created_at']

@@ -42,8 +42,3 @@ class TelegramSubscriptionSerializer(serializers.ModelSerializer):
         fields = ['id', 'phone_number', 'username', 'created_at', 'is_active']
         read_only_fields = ['id', 'created_at']
         
-class WithdrawalSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Withdrawal
-        fields = ['id', 'amount', 'beneficiary_name', 'beneficiary_number', 'status', 'created_at']
-        read_only_fields = ['status', 'created_at']

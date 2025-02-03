@@ -1,7 +1,7 @@
 # accounts/admin.py
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from .models import User, Sponsorship
+from .models import User, Sponsorship, Withdrawal
 from django.http import HttpResponse
 import xlsxwriter
 from io import BytesIO
@@ -39,7 +39,7 @@ class CustomUserAdmin(UserAdmin):
         }),
     )
 
-    def export_inactive_users_excel(self, request, queryset):
+    def export_active_users_excel(self, request, queryset):
         # Créer un buffer pour le fichier Excel
         output = BytesIO()
         workbook = xlsxwriter.Workbook(output)
@@ -55,8 +55,8 @@ class CustomUserAdmin(UserAdmin):
 
         # Filtrer les utilisateurs
         users = User.objects.filter(
-            is_active=False,
-            is_paid=False,
+            is_active=True,
+            is_paid=True,
             date_joined__gte=time_threshold
         )
 
@@ -77,7 +77,7 @@ class CustomUserAdmin(UserAdmin):
         
         return response
     
-    export_inactive_users_excel.short_description = "Exporter les utilisateurs inactifs (48h) en Excel"
+    export_active_users_excel.short_description = "Exporter les utilisateurs ayant payés et inscrit il y a moins de 48h - en Excel"
 
     def mark_users_active_paid(self, request, queryset):
         # Calculer la date limite (48h)
@@ -105,3 +105,46 @@ class SponsorshipAdmin(admin.ModelAdmin):
 
 admin.site.register(User, CustomUserAdmin)
 admin.site.register(Sponsorship, SponsorshipAdmin)
+
+
+
+@admin.register(Withdrawal)
+class WithdrawalAdmin(admin.ModelAdmin):
+    list_display = ['id', 'user', 'amount', 'status', 'created_at', 'processed_at']
+    list_filter = ['status', 'created_at']
+    search_fields = ['user__username', 'beneficiary_name', 'beneficiary_number']
+    
+    # Custom actions for changing status directly in admin
+    actions = ['mark_as_processing', 'mark_as_completed', 'mark_as_rejected']
+
+    def mark_as_processing(self, request, queryset):
+        queryset.update(status='PROCESSING')
+    mark_as_processing.short_description = "Mark selected withdrawals as Processing"
+
+    def mark_as_completed(self, request, queryset):
+        for withdrawal in queryset:
+            withdrawal.status = 'COMPLETED'
+            withdrawal.processed_at = timezone.now()
+            withdrawal.save()
+    mark_as_completed.short_description = "Mark selected withdrawals as Completed"
+
+    def mark_as_rejected(self, request, queryset):
+        for withdrawal in queryset:
+            withdrawal.status = 'REJECTED'
+            withdrawal.processed_at = timezone.now()
+            withdrawal.save()
+    mark_as_rejected.short_description = "Mark selected withdrawals as Rejected"
+
+    def get_readonly_fields(self, request, obj=None):
+        # Prevent editing certain fields
+        return ['user', 'created_at'] if obj else []
+
+    # Customize the display in admin
+    def get_list_display_links(self, request, list_display):
+        return ['id', 'user']  # Make these fields clickable
+
+    def get_actions(self, request):
+        actions = super().get_actions(request)
+        if not request.user.is_superuser:
+            del actions['delete_selected']
+        return actions
