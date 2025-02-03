@@ -7,7 +7,7 @@ from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from accounts.models import Withdrawal
 from .models import *
 from .serializers import (FormationDetailSerializer, FormationListSerializer,  PaymentSerializer,
-                          InscriptionSerializer, TelegramSubscriptionSerializer, WithdrawalSerializer)
+                          InscriptionSerializer, TelegramSubscriptionSerializer)
 from rest_framework.views import APIView
 from rest_framework.permissions import AllowAny
 from django.conf import settings
@@ -381,12 +381,3 @@ class VerifyAndCreatePaymentView(APIView):
     
 
 
-class WithdrawalViewSet(viewsets.ModelViewSet):
-    serializer_class = WithdrawalSerializer
-    permission_classes = [IsAuthenticated]
-    
-    def get_queryset(self):
-        return Withdrawal.objects.filter(user=self.request.user)
-    
-    def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
