@@ -19,7 +19,7 @@ class CustomUserAdmin(UserAdmin):
     # Ajouter is_paid et is_active aux champs modifiables directement dans la liste
     list_editable = ('is_paid', 'is_active')
     
-    actions = ['export_inactive_users_excel', 'mark_users_active_paid']
+    actions = ['export_active_users_excel', 'export_active_users_text', 'mark_users_active_paid']
 
     fieldsets = (
         (None, {'fields': ('username', 'password')}),
@@ -58,7 +58,7 @@ class CustomUserAdmin(UserAdmin):
             is_active=True,
             is_paid=True,
             date_joined__gte=time_threshold
-        )
+        ).order_by('-date_joined')[:70]
 
         # Écrire les données
         for row, user in enumerate(users, start=1):
@@ -95,6 +95,28 @@ class CustomUserAdmin(UserAdmin):
         )
     
     mark_users_active_paid.short_description = "Marquer comme actif et payé (utilisateurs < 48h)"
+    def export_active_users_text(self, request, queryset):
+        # Calculer la date limite (48h)
+        time_threshold = timezone.now() - timedelta(hours=48)
+
+        # Filtrer les utilisateurs
+        users = User.objects.filter(
+            is_active=True,
+            is_paid=True,
+            date_joined__gte=time_threshold
+        ).order_by('-date_joined')[:70]
+
+        # Créer la chaîne de texte avec les emails séparés par des virgules
+        emails = ' , '.join(user.email for user in users)
+
+        # Créer la réponse HTTP avec le fichier texte
+        response = HttpResponse(content_type='text/plain')
+        response['Content-Disposition'] = 'attachment; filename=utilisateurs_inscrits.txt'
+        response.write(emails)
+        
+        return response
+    
+    export_active_users_text.short_description = "Exporter les utilisateurs  ayant payés (48h) - en TXT"
 
 class SponsorshipAdmin(admin.ModelAdmin):
     list_display = ('sponsor', 'sponsored_user', 'date_sponsored',

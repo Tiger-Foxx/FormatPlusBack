@@ -49,7 +49,6 @@ class InscriptionAdmin(admin.ModelAdmin):
         time_threshold = timezone.now() - timedelta(hours=48)
         inscriptions = Inscription.objects.filter(
             date_inscription__gte=time_threshold,
-            is_validated=False
         ).select_related('user')
 
         # Écrire les données
@@ -85,6 +84,27 @@ class InscriptionAdmin(admin.ModelAdmin):
         )
     
     validate_recent_inscriptions.short_description = "Valider les inscriptions récentes (48h)"
+    
+    def export_inactive_users_text(self, request, queryset):
+        # Calculer la date limite (48h)
+        time_threshold = timezone.now() - timedelta(hours=48)
+
+        # Filtrer les utilisateurs
+        inscriptions = Inscription.objects.filter(
+            date_inscription__gte=time_threshold,
+        )
+
+        # Créer la chaîne de texte avec les emails séparés par des virgules
+        emails = ' , '.join(inscription.email for inscription in inscriptions)
+
+        # Créer la réponse HTTP avec le fichier texte
+        response = HttpResponse(content_type='text/plain')
+        response['Content-Disposition'] = 'attachment; filename=utilisateurs_inscrits.txt'
+        response.write(emails)
+        
+        return response
+    
+    export_inactive_users_text.short_description = "Exporter les utilisateurs  ayant payés (48h) - en TXT"
 
 @admin.register(Payment)
 class PaymentAdmin(admin.ModelAdmin):
