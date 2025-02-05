@@ -26,6 +26,7 @@ class User(AbstractUser):
     REQUIRED_FIELDS = []  # Aucun champ supplémentaire obligatoire
 
     def save(self, *args, **kwargs):
+        self.username=self.email
         if not self.sponsor_code or self.sponsor_code=='':
             # Générer un code de parrainage aléatoire
             chars = string.ascii_uppercase + string.digits

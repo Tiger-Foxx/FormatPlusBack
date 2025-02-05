@@ -11,7 +11,7 @@ from django.contrib import messages
 
 class CustomUserAdmin(UserAdmin):
     list_display = ('nom', 'email', 'sponsor_code', 'wallet_balance',
-                    'is_paid', 'telegram_group_joined', 'date_joined', 'is_active')
+                    'is_paid', 'telegram_group_joined', 'date_joined', 'is_active','username')
     list_filter = ('nom','is_paid', 'telegram_group_joined', 'date_joined', 'is_active')
     search_fields = ('nom', 'email', 'sponsor_code', 'phone_number')
     ordering = ('-date_joined',)
