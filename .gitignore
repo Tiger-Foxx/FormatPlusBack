@@ -7,3 +7,4 @@ db.sqlite3
 *.sqlite
 *.db
 *.db3
+appPass.txt

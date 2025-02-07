@@ -43,6 +43,8 @@ urlpatterns = [
     path('logout/', LogoutView.as_view(), name='logout'),
     path('webhook/payment/', PaymentWebhookView.as_view(), name='payment-webhook'),
     # Inclusion des URLs du router
-     path('token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),  # Route pour récupérer un access et refresh token
-path('token/refresh/', CustomTokenRefreshView.as_view(), name='token_refresh'),    path('', include(router.urls)),
+    path('token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),  # Route pour récupérer un access et refresh token
+    path('token/refresh/', CustomTokenRefreshView.as_view(), name='token_refresh'),    path('', include(router.urls)),
+    path('password-reset/', PasswordResetRequestView.as_view(), name='password-reset-request'),
+    path('password-reset/confirm/', PasswordResetConfirmView.as_view(), name='password-reset-confirm'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
