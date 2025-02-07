@@ -45,7 +45,7 @@ class UserRegistrationView(views.APIView):
             # Si un utilisateur inactif existe déjà, renvoyer ses données
             user_serializer = UserSerializer(existing_user)
             return Response({
-                'message': 'Utilisateur déjà inscrit mais en attente de paiement.',
+                'message': 'Utilisateur déjà inscrit mais possiblement en attente de paiement.',
                 'user': user_serializer.data
             }, status=status.HTTP_200_OK)
 
