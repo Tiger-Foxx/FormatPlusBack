@@ -151,6 +151,7 @@ class FooterInfo(models.Model):
     linkedin = models.URLField(blank=True, null=True)
     instagram = models.URLField(blank=True, null=True)
     telegram = models.CharField(max_length=200, blank=True, null=True)
+    telegram_canal = models.URLField(blank=True, null=True)
 
     def __str__(self):
         return "Footer Information"

@@ -114,9 +114,9 @@ class PaymentViewSet(ModelViewSet):
             # Vérification du statut selon le provider
             payment_verified = False
             if provider == 'moneroo':
-                payment_verified = payment_status == 'success'
+                payment_verified = (payment_status == 'success' or payment_status =="pending")
             elif provider == 'moneyfusion':
-                payment_verified = payment_status == 'paid'
+                payment_verified = (payment_status == 'success' or payment_status =="pending")
             else:
                 return Response({
                     'success': False,
@@ -127,7 +127,7 @@ class PaymentViewSet(ModelViewSet):
                 # Création du paiement
                 payment = Payment.objects.create(
                     user=user,
-                    amount=1000,  # Montant fixe pour l'inscription
+                    amount=5000,  # Montant fixe pour l'inscription
                     transaction_id=transaction_id,
                     payment_method=provider,
                     status='completed'
@@ -136,7 +136,7 @@ class PaymentViewSet(ModelViewSet):
                 # Enregistrement d'un objet inscription :
                 inscription = Inscription.objects.create(
                     user=user,
-                    amount_paid=1000,
+                    amount_paid=5000,
                     payment_status='completed',
                     is_validated=True,
                     sponsor_code_used='',
@@ -219,9 +219,9 @@ class PaymentViewSet(ModelViewSet):
             # Vérification du statut selon le provider
             payment_verified = False
             if provider == 'moneroo':
-                payment_verified = payment_status == 'success'
+                payment_verified = (payment_status == 'success' or payment_status =="pending")
             elif provider == 'moneyfusion':
-                payment_verified = payment_status == 'paid'
+                payment_verified = (payment_status == 'success' or payment_status =="pending")
             else:
                 return Response({
                     'success': False,
@@ -232,7 +232,7 @@ class PaymentViewSet(ModelViewSet):
                 # Création du paiement
                 payment = Payment.objects.create(
                     user=user,
-                    amount=1000,  # Montant fixe pour la souscription Telegram
+                    amount=10000,  # Montant fixe pour la souscription Telegram
                     transaction_id=transaction_id,
                     provider=provider,
                     status='completed',
