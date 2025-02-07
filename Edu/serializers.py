@@ -42,3 +42,7 @@ class TelegramSubscriptionSerializer(serializers.ModelSerializer):
         fields = ['id', 'phone_number', 'username', 'created_at', 'is_active']
         read_only_fields = ['id', 'created_at']
         
+class FooterInfoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = FooterInfo
+        fields = '__all__'

@@ -183,3 +183,11 @@ class TelegramSubscriptionAdmin(admin.ModelAdmin):
         )
     
     activate_recent_subs.short_description = "Activer les souscriptions récentes (48h)"
+    
+    
+from .models import FooterInfo
+
+
+@admin.register(FooterInfo)
+class FooterInfoAdmin(admin.ModelAdmin):
+    pass

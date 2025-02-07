@@ -6,7 +6,7 @@ from rest_framework.permissions import IsAuthenticated, IsAdminUser
 
 from accounts.models import Withdrawal
 from .models import *
-from .serializers import (FormationDetailSerializer, FormationListSerializer,  PaymentSerializer,
+from .serializers import (FooterInfoSerializer, FormationDetailSerializer, FormationListSerializer,  PaymentSerializer,
                           InscriptionSerializer, TelegramSubscriptionSerializer)
 from rest_framework.views import APIView
 from rest_framework.permissions import AllowAny
@@ -380,4 +380,9 @@ class VerifyAndCreatePaymentView(APIView):
         return Response({"error": "Le paiement n'est pas terminé."}, status=status.HTTP_400_BAD_REQUEST)
     
 
+
+class FooterInfoViewSet(viewsets.ModelViewSet):
+    queryset = FooterInfo.objects.all()
+    serializer_class = FooterInfoSerializer
+    permission_classes = [AllowAny]
 

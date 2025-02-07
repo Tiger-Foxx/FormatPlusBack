@@ -34,6 +34,7 @@ router.register('users', UserViewSet,'users')
 router.register('formations', FormationViewSet,'formations')
 router.register('payments', PaymentViewSet, basename='payment')
 router.register('withdrawals', WithdrawalViewSet, 'withdrawals')
+router.register('footer-info', FooterInfoViewSet,basename='footer-info')
 
 urlpatterns = [
     path('admin/', admin.site.urls),
