@@ -234,18 +234,25 @@ class PaymentViewSet(ModelViewSet):
                     user=user,
                     amount=10000,  # Montant fixe pour la souscription Telegram
                     transaction_id=transaction_id,
-                    provider=provider,
+                    payment_method=provider,
                     status='completed',
-                    payment_type='telegram_subscription'  # Nouveau type de paiement
+                    payment_type='telegram'  # Nouveau type de paiement
                 )
 
                 # Création de la souscription Telegram
-                telegram_subscription = TelegramSubscription.objects.create(
-                    user=user,
-                    phone_number=telegram_phone,
-                    username=telegram_username,
-                    payment=payment
-                )
+                if telegram_username :
+                    telegram_subscription = TelegramSubscription.objects.create(
+                        user=user,
+                        phone_number=telegram_phone,
+                        username=telegram_username,
+                        payment=payment
+                    )
+                else :
+                     telegram_subscription = TelegramSubscription.objects.create(
+                        user=user,
+                        phone_number=telegram_phone,
+                        payment=payment
+                    )
 
                 logger.info(f"Souscription Telegram créée pour l'utilisateur {user_id}")
 
