@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-+43h5fhx*y(=1_5hh4o9el4mv)l!!pj6_%6bu*n66n+7ne9(n=
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*','127.0.0.1','http://localhost:5173','https://edu-drive.vercel.app']
+ALLOWED_HOSTS = ['*','127.0.0.1','http://localhost:5173','https://edu-drive.vercel.app','https://format-plus.vercel.app']
 
 
 # Application definition
@@ -163,13 +163,14 @@ AUTH_USER_MODEL = 'accounts.User'
 
 PAYMENT_WEBHOOK_SECRET = 'votre-secret-ici'
 
-FRONT_END_LINK = 'https://edu-drive.vercel.app'
+FRONT_END_LINK = 'https://format-plus.vercel.app'
 
 # settings.py
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'  # Serveur SMTP de Gmail
 EMAIL_PORT = 587  # Port SMTP pour TLS
 EMAIL_USE_TLS = True
+
 EMAIL_HOST_USER = 'formatplusx@gmail.com'  # Votre adresse Gmail
 EMAIL_HOST_PASSWORD = 'eovftvglpvtrcceq'  # Mot de passe d'application Gmail
 DEFAULT_FROM_EMAIL = 'formatplusx@gmail.com'  # Adresse d'expéditeur par défaut
