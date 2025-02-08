@@ -26,7 +26,8 @@ SECRET_KEY = 'django-insecure-+43h5fhx*y(=1_5hh4o9el4mv)l!!pj6_%6bu*n66n+7ne9(n=
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*','127.0.0.1','http://localhost:5173','https://edu-drive.vercel.app','https://format-plus.vercel.app']
+ALLOWED_HOSTS = ['*','127.0.0.1','http://localhost:5173','https://edu-drive.vercel.app','FormatPlus.pythonanywhere.com','https://format-plus.vercel.app']
+
 
 
 # Application definition
@@ -48,7 +49,7 @@ INSTALLED_APPS = [
     # Local apps
     'accounts',
     'Edu',
-    
+
 ]
 
 MIDDLEWARE = [
