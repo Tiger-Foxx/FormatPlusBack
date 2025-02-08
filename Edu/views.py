@@ -107,13 +107,13 @@ class PaymentViewSet(ModelViewSet):
 
             if existing_payment:
                 return Response({
-                    'success': False,
+                    'success': True,
                     'message': 'Ce paiement a déjà été traité'
                 }, status=status.HTTP_400_BAD_REQUEST)
 
             # Vérification du statut selon le provider
             payment_verified = False
-            if provider == 'moneroo':
+            if provider == 'campay':
                 payment_verified = (payment_status == 'success' or payment_status =="pending")
             elif provider == 'moneyfusion':
                 payment_verified = (payment_status == 'success' or payment_status =="pending")
@@ -212,13 +212,13 @@ class PaymentViewSet(ModelViewSet):
 
             if existing_payment:
                 return Response({
-                    'success': False,
+                    'success': True,
                     'message': 'Ce paiement a déjà été traité'
                 }, status=status.HTTP_400_BAD_REQUEST)
 
             # Vérification du statut selon le provider
             payment_verified = False
-            if provider == 'moneroo':
+            if provider == 'campay':
                 payment_verified = (payment_status == 'success' or payment_status =="pending")
             elif provider == 'moneyfusion':
                 payment_verified = (payment_status == 'success' or payment_status =="pending")
@@ -346,21 +346,21 @@ class PaymentWebhookView(APIView):
 class VerifyAndCreatePaymentView(APIView):
     def post(self, request):
         """
-        Vérifier le statut du paiement auprès de Moneroo et créer un objet Payment.
+        Vérifier le statut du paiement auprès de campay et créer un objet Payment.
         """
-        transaction_id = request.data.get('transaction_id')  # ID de transaction Moneroo
+        transaction_id = request.data.get('transaction_id')  # ID de transaction campay
         user_id = request.data.get('user_id')  # ID de l'utilisateur
         
         if not transaction_id or not user_id:
             return Response({"error": "transaction_id et user_id sont requis."}, status=status.HTTP_400_BAD_REQUEST)
 
-        # Vérifier le statut du paiement auprès de Moneroo
-        moneroo_url = f"https://api.moneroo.io/v1/payments/{transaction_id}"
+        # Vérifier le statut du paiement auprès de campay
+        campay_url = f"https://api.campay.io/v1/payments/{transaction_id}"
         headers = {
             "Authorization": "Bearer YOUR_SECRET_KEY",
             "Accept": "application/json",
         }
-        response = requests.get(moneroo_url, headers=headers)
+        response = requests.get(campay_url, headers=headers)
 
         if response.status_code != 200:
             return Response({"error": "Échec de la vérification du paiement."}, status=status.HTTP_400_BAD_REQUEST)
