@@ -36,6 +36,9 @@ class User(AbstractUser):
                     self.sponsor_code = code
                     break
         super().save(*args, **kwargs)
+    def updateTelegramGroupJoined(self):
+        self.telegram_group_joined = True
+        self.save()
 
     def __str__(self):
         return f"{self.email} - {self.sponsor_code}"

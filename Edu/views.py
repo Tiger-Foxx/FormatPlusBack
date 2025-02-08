@@ -238,7 +238,7 @@ class PaymentViewSet(ModelViewSet):
                     status='completed',
                     payment_type='telegram'  # Nouveau type de paiement
                 )
-
+                user.updateTelegramGroupJoined()
                 # Création de la souscription Telegram
                 if telegram_username :
                     telegram_subscription = TelegramSubscription.objects.create(
