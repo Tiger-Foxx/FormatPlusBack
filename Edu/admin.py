@@ -129,7 +129,7 @@ class PaymentAdmin(admin.ModelAdmin):
 
 @admin.register(TelegramSubscription)
 class TelegramSubscriptionAdmin(admin.ModelAdmin):
-    list_display = ('user', 'created_at', 'is_active')
+    list_display = ('phone_number','user','username', 'created_at', 'is_active')
     list_filter = ('is_active', 'created_at')
     list_editable = ('is_active',)  # Permet la modification directe
     search_fields = ('user__username', 'user__email')

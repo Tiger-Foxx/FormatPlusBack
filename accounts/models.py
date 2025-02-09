@@ -63,7 +63,7 @@ class Sponsorship(models.Model):
     indirect_commission_percentage = models.DecimalField(
         max_digits=5,
         decimal_places=2,
-        default=10.00
+        default=15.00
     )
 
     class Meta:
@@ -90,11 +90,17 @@ class Withdrawal(models.Model):
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='PENDING')
     created_at = models.DateTimeField(auto_now_add=True)
     processed_at = models.DateTimeField(null=True, blank=True)
+    Operateur = models.CharField(max_length=255, default='INCONNU')
+    is_MTN = models.BooleanField(default=False)
     
     class Meta:
         ordering = ['-created_at']
 
     def save(self, *args, **kwargs):
+        if self.is_MTN:
+            self.Operateur = 'MTN'
+        else:
+            self.Operateur = 'ORANGE'
         if self._state.adding:  # Si c'est une nouvelle création
             if self.amount > self.user.wallet_balance * Decimal('0.98'):
                 raise ValueError("Le montant demandé dépasse le maximum autorisé")

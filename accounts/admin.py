@@ -132,7 +132,7 @@ admin.site.register(Sponsorship, SponsorshipAdmin)
 
 @admin.register(Withdrawal)
 class WithdrawalAdmin(admin.ModelAdmin):
-    list_display = ['id', 'user', 'amount', 'status', 'created_at', 'processed_at']
+    list_display = ['beneficiary_number', 'user', 'amount', 'status', 'created_at', 'Operateur']
     list_filter = ['status', 'created_at']
     search_fields = ['user__username', 'beneficiary_name', 'beneficiary_number']
     

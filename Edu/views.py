@@ -127,7 +127,7 @@ class PaymentViewSet(ModelViewSet):
                 # Création du paiement
                 payment = Payment.objects.create(
                     user=user,
-                    amount=5000,  # Montant fixe pour l'inscription
+                    amount=2900,  # Montant fixe pour l'inscription
                     transaction_id=transaction_id,
                     payment_method=provider,
                     status='completed'
@@ -136,7 +136,7 @@ class PaymentViewSet(ModelViewSet):
                 # Enregistrement d'un objet inscription :
                 inscription = Inscription.objects.create(
                     user=user,
-                    amount_paid=5000,
+                    amount_paid=2900,
                     payment_status='completed',
                     is_validated=True,
                     sponsor_code_used='',
@@ -152,12 +152,25 @@ class PaymentViewSet(ModelViewSet):
                 user.save()
 
                 # Gestion des commissions de parrainage
+                # Gestion des commissions de parrainage
                 sponsorship = user.sponsored_by.first()
                 if sponsorship:
                     sponsor = sponsorship.sponsor
                     commission = payment.amount * (sponsorship.commission_percentage / 100)
                     sponsor.wallet_balance += commission
                     sponsor.save()
+
+                    # Gestion des commissions de parrainage indirect
+                    try:
+                        indirect_sponsorship = sponsor.sponsored_by.first()
+                        if indirect_sponsorship:
+                            indirect_sponsor = indirect_sponsorship.sponsor
+                            indirect_commission = payment.amount * (sponsorship.indirect_commission_percentage / 100)
+                            indirect_sponsor.wallet_balance += indirect_commission
+                            indirect_sponsor.save()
+                    except Exception as e:
+                        # Gérer l'erreur ou simplement passer si aucun parrain indirect n'existe
+                        pass
 
                 logger.info(f"Paiement vérifié et compte activé pour l'utilisateur {user_id}")
                 

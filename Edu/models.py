@@ -129,7 +129,7 @@ User = get_user_model()
 class TelegramSubscription(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='telegram_subscriptions')
     phone_number = models.CharField(max_length=20)
-    username = models.CharField(max_length=100, null=True, blank=True)
+    username = models.CharField(max_length=100, default='@aucun')
     payment = models.OneToOneField('Payment', on_delete=models.CASCADE, related_name='telegram_subscription')
     created_at = models.DateTimeField(auto_now_add=True)
     is_active = models.BooleanField(default=True)
