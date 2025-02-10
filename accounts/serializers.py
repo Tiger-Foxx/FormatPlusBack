@@ -126,5 +126,5 @@ class LoginSerializer(serializers.Serializer):
 class WithdrawalSerializer(serializers.ModelSerializer):
     class Meta:
         model = Withdrawal
-        fields = ['id', 'amount', 'beneficiary_name', 'beneficiary_number', 'status', 'created_at','is_MTN']
+        fields = ['id', 'amount', 'beneficiary_name', 'beneficiary_number', 'country', 'operator', 'status', 'created_at']
         read_only_fields = ['status', 'created_at']

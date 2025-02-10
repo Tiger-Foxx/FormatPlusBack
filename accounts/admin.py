@@ -132,11 +132,10 @@ admin.site.register(Sponsorship, SponsorshipAdmin)
 
 @admin.register(Withdrawal)
 class WithdrawalAdmin(admin.ModelAdmin):
-    list_display = ['beneficiary_number', 'user', 'amount', 'status', 'created_at', 'Operateur']
-    list_filter = ['status', 'created_at']
-    search_fields = ['user__username', 'beneficiary_name', 'beneficiary_number']
+    list_display = ['beneficiary_number', 'user', 'amount', 'country', 'operator', 'status', 'created_at']
+    list_filter = ['status', 'created_at', 'country']
+    search_fields = ['user__username', 'beneficiary_name', 'beneficiary_number', 'country', 'operator']
     
-    # Custom actions for changing status directly in admin
     actions = ['mark_as_processing', 'mark_as_completed', 'mark_as_rejected']
 
     def mark_as_processing(self, request, queryset):
@@ -156,17 +155,3 @@ class WithdrawalAdmin(admin.ModelAdmin):
             withdrawal.processed_at = timezone.now()
             withdrawal.save()
     mark_as_rejected.short_description = "Mark selected withdrawals as Rejected"
-
-    def get_readonly_fields(self, request, obj=None):
-        # Prevent editing certain fields
-        return ['user', 'created_at'] if obj else []
-
-    # Customize the display in admin
-    def get_list_display_links(self, request, list_display):
-        return ['id', 'user']  # Make these fields clickable
-
-    def get_actions(self, request):
-        actions = super().get_actions(request)
-        if not request.user.is_superuser:
-            del actions['delete_selected']
-        return actions
