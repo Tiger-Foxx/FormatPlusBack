@@ -102,7 +102,7 @@ class Withdrawal(models.Model):
         else:
             self.Operateur = 'ORANGE'
         if self._state.adding:  # Si c'est une nouvelle création
-            if self.amount > self.user.wallet_balance * Decimal('0.98'):
+            if self.amount > self.user.wallet_balance * Decimal('1'):
                 raise ValueError("Le montant demandé dépasse le maximum autorisé")
             self.user.wallet_balance -= self.amount
             self.user.save()
