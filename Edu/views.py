@@ -116,7 +116,7 @@ class PaymentViewSet(ModelViewSet):
             if provider == 'campay':
                 payment_verified = (payment_status == 'success' or payment_status =="pending")
             elif provider == 'moneyfusion':
-                payment_verified = (payment_status == 'success' or payment_status =="pending")
+                payment_verified = (payment_status == 'success' or payment_status =="pending" or "paid" )
             else:
                 return Response({
                     'success': False,
