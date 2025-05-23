@@ -1,4 +1,3 @@
-# accounts/serializers.py
 from decimal import Decimal
 from rest_framework import serializers
 
@@ -65,7 +64,7 @@ class DetailedUserSerializer(serializers.ModelSerializer):
                 'level': 'direct'
             })
         
-        # Parrainages indirects
+        # Parrainages indirects (niveau 2)
         direct_sponsored_users = User.objects.filter(
             sponsored_by__sponsor=obj
         )
@@ -80,10 +79,29 @@ class DetailedUserSerializer(serializers.ModelSerializer):
             referrals.append({
                 'name': sponsorship.sponsored_user.nom,
                 'date': sponsorship.date_sponsored,
-                'amount': float(sponsorship.sponsored_user.wallet_balance * Decimal('0.1')),
+                'amount': float(sponsorship.sponsored_user.wallet_balance * Decimal('0.15')),
                 'level': 'indirect'
             })
+            
+        # Parrainages indirects (niveau 3 - filleuls des filleuls des filleuls)
+        indirect_sponsored_users = User.objects.filter(
+            sponsored_by__sponsor__in=direct_sponsored_users
+        )
         
+        indirect_indirect_sponsorships = (
+            Sponsorship.objects.filter(sponsor__in=indirect_sponsored_users)
+            .select_related('sponsored_user', 'sponsor')
+            .order_by('-date_sponsored')
+        )
+        
+        for sponsorship in indirect_indirect_sponsorships:
+            referrals.append({
+                'name': sponsorship.sponsored_user.nom,
+                'date': sponsorship.date_sponsored,
+                'amount': float(sponsorship.sponsored_user.wallet_balance * Decimal('0.20')),
+                'level': 'indirect'
+            })
+            
         # Trier par date décroissante
         return sorted(referrals, key=lambda x: x['date'], reverse=True)
     

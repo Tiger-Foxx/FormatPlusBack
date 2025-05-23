@@ -65,6 +65,12 @@ class Sponsorship(models.Model):
         decimal_places=2,
         default=15.00
     )
+    
+    indirect_indirect_commission_percentage = models.DecimalField(
+        max_digits=5,
+        decimal_places=2,
+        default=20.00
+    )
 
     class Meta:
         unique_together = ['sponsor', 'sponsored_user']

@@ -127,7 +127,7 @@ class PaymentViewSet(ModelViewSet):
                 # Création du paiement
                 payment = Payment.objects.create(
                     user=user,
-                    amount=2900,  # Montant fixe pour l'inscription
+                    amount=3500,  # Montant fixe pour l'inscription
                     transaction_id=transaction_id,
                     payment_method=provider,
                     status='completed'
@@ -136,7 +136,7 @@ class PaymentViewSet(ModelViewSet):
                 # Enregistrement d'un objet inscription :
                 inscription = Inscription.objects.create(
                     user=user,
-                    amount_paid=2900,
+                    amount_paid=3500,
                     payment_status='completed',
                     is_validated=True,
                     sponsor_code_used='',
@@ -151,6 +151,7 @@ class PaymentViewSet(ModelViewSet):
                 user.is_paid = True
                 user.save()
 
+                # Gestion des commissions de parrainage
                 # Gestion des commissions de parrainage
                 # Gestion des commissions de parrainage
                 sponsorship = user.sponsored_by.first()
@@ -168,6 +169,18 @@ class PaymentViewSet(ModelViewSet):
                             indirect_commission = payment.amount * (sponsorship.indirect_commission_percentage / 100)
                             indirect_sponsor.wallet_balance += indirect_commission
                             indirect_sponsor.save()
+                            
+                            # Gestion des commissions de parrainage indirect indirect
+                            try:
+                                indirect_indirect_sponsorship = indirect_sponsor.sponsored_by.first()
+                                if indirect_indirect_sponsorship:
+                                    indirect_indirect_sponsor = indirect_indirect_sponsorship.sponsor
+                                    indirect_indirect_commission = payment.amount * (sponsorship.indirect_indirect_commission_percentage / 100)
+                                    indirect_indirect_sponsor.wallet_balance += indirect_indirect_commission
+                                    indirect_indirect_sponsor.save()
+                            except Exception as e:
+                                # Gérer l'erreur ou simplement passer si aucun parrain indirect indirect n'existe
+                                pass
                     except Exception as e:
                         # Gérer l'erreur ou simplement passer si aucun parrain indirect n'existe
                         pass
@@ -234,7 +247,7 @@ class PaymentViewSet(ModelViewSet):
             if provider == 'campay':
                 payment_verified = (payment_status == 'success' or payment_status =="pending")
             elif provider == 'moneyfusion':
-                payment_verified = (payment_status == 'success' or payment_status =="pending")
+                payment_verified = (payment_status == 'success' or payment_status =="pending" or payment_status=="paid")
             else:
                 return Response({
                     'success': False,
